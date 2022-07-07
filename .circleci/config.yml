@@ -5,7 +5,7 @@ orbs:
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
+    #parameters:
       # Add parameter here   
     steps:
       - run:
@@ -154,6 +154,7 @@ jobs:
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
+    steps:
       - checkout
       - run:
           name: Ensure back-end infrastructure exists
