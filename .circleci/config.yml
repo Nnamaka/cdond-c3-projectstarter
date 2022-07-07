@@ -320,9 +320,9 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      - build-frontend:
           context: slacknotifications
-      - build-backend
+      - build-backend:
           context: slacknotifications
       - test-frontend:
           requires: [build-frontend]
