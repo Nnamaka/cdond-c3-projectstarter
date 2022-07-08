@@ -278,7 +278,7 @@ jobs:
           command: |
             pwd
             ls
-            cat ~/root/project/run.sh
+            cat ~/project/run.sh
       - run:
           name: Deploy backend
           command: |
