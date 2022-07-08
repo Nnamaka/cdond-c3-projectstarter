@@ -183,7 +183,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> inventory.txt
       - run:
-          name: Add back-end ip to ansible inventory
+          name: View ansible inventory
           command: |
             cat inventory.txt
       - run:
@@ -208,12 +208,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            ls
             apk add openssh
             apk add --update ansible
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
+            pwd
+            ls
             ansible-playbook -i inventory.txt configure-server.yml
       # Here's where you will add some code to rollback on failure      
 
