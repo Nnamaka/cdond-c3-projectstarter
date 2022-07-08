@@ -261,7 +261,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.8-alpine3.14-circleci/node:13.8.0
+      - image: python:3.8-alpine3.14-node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
