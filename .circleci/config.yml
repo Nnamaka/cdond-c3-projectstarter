@@ -209,6 +209,7 @@ jobs:
           name: Install dependencies
           command: |
             ls
+            cat inventory.txt
             apk add openssh
             apk add --update ansible
       - run:
