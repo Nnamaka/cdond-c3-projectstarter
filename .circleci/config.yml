@@ -261,7 +261,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.8-alpine3.14
+      - image: python:3.8-alpine3.14-circleci/node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -291,6 +291,10 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
+      - run:
+          name: Install dependencies
+          command: |
+            ls
       # Here's where you will add some code to rollback on failure  
 
 #   smoke-test:
