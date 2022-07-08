@@ -186,6 +186,7 @@ jobs:
       - run:
           name: View ansible inventory
           command: |
+            cd .circleci/ansible
             cat inventory.txt
       - run:
           name: Install tar utility
