@@ -261,7 +261,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: python:3.8-alpine3.14-node:13.8.0
+      - image: python:3.8-alpine3.14
     steps:
       - checkout
       - add_ssh_keys:
@@ -273,6 +273,7 @@ jobs:
           command: |
             apk add openssh
             apk add --update ansible
+            apk add --update nodejs npm
       - run:
           name: Install dependencies
           command: |
