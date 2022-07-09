@@ -281,13 +281,13 @@ jobs:
           fingerprints: ["fb:f8:6f:58:77:43:4d:ab:14:65:f1:5e:86:77:41:15"]
       # - attach_workspace:
       #     at: ~/
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       pwd
-      #       ls
-      #       apk add openssh
-      #       apk add --update ansible
+      - run:
+          name: Install dependencies
+          command: |
+            pwd
+            ls
+            apk add openssh
+            apk add --update ansible
       #       apk add --update nodejs npm
       - run:
           name: Install dependencies
