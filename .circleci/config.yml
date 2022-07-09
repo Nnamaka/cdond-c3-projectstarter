@@ -279,8 +279,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["fb:f8:6f:58:77:43:4d:ab:14:65:f1:5e:86:77:41:15"]
-      - attach_workspace:
-          at: ~/
+      # - attach_workspace:
+      #     at: ~/
       # - run:
       #     name: Install dependencies
       #     command: |
@@ -293,9 +293,8 @@ jobs:
           name: Install dependencies
           command: |
             pwd
-            cd backend
-            pwd
             cd .circleci/ansible
+            ansible-playbook -i inventory.txt deploy-backend.yml
       # - run:
       #     name: Deploy backend
       #     command: |
@@ -390,7 +389,7 @@ workflows:
       # - scan-frontend:
       #     requires: [build-frontend]
       #     context: slacknotifications
-      - deploy-infrastructure
+      # - deploy-infrastructure
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           # filters:
           #   branches:
@@ -402,8 +401,8 @@ workflows:
       # - deploy-frontend:
       #     requires: [deploy-infrastructure]
           # requires: [run-migrations]
-      - deploy-backend:
-          requires: [deploy-infrastructure]
+      - deploy-backend
+          # requires: [deploy-infrastructure]
           # requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
