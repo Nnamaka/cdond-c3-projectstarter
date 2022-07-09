@@ -250,10 +250,11 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
+            yum install nodejs npm --enablerepo=epel
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress')
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -284,12 +285,6 @@ jobs:
             apk add openssh
             apk add --update ansible
             apk add --update nodejs npm
-      - run:
-          name: Install dependencies
-          command: |
-            pwd
-            ls
-            cat ~/project/run.sh
       - run:
           name: Deploy backend
           command: |
@@ -387,7 +382,7 @@ workflows:
       # - scan-frontend:
       #     requires: [build-frontend]
       #     context: slacknotifications
-      # - deploy-infrastructure:
+      - deploy-infrastructure
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           # filters:
           #   branches:
@@ -396,9 +391,11 @@ workflows:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
-      - deploy-frontend
+      - deploy-frontend:
+          requires: [deploy-infrastructure]
           # requires: [run-migrations]
-      - deploy-backend
+      - deploy-backend:
+          requires: [deploy-infrastructure]
           # requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
