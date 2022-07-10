@@ -304,13 +304,13 @@ jobs:
 
   smoke-test:
     docker:
-      - image: python:3.8-alpine3.14
+      - image: amazon/aws-cli
     steps:
-      # Checkout code from git
-      - run:
-          name: Install dependencies
-          command: |
-            apk add curl
+      - checkout
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       apk add curl
       - run:
           name: Get backend url
           command: |
