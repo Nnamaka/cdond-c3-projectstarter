@@ -314,9 +314,13 @@ jobs:
 
   smoke-test:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.10-alpine3.16
     steps:
       - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl aws-cli tar gzip
       - run:
           name: Get backend url
           command: |
@@ -331,9 +335,9 @@ jobs:
             echo "${API_URL}"
             if curl -s "${API_URL}/api/status" | grep "ok"
             then
-                exit 0
+                return 0
             else
-                exit 1
+                return 1
             fi
       - run:
           name: Frontend smoke test.
@@ -343,9 +347,9 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
                 # Change this to 0 after the job fails
-              exit 0
+              return 0
             else
-              exit 1
+              return 1
             fi
       # Here's where you will add some code to rollback on failure  
 
