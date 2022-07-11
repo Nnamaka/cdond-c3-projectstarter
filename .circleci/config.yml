@@ -5,34 +5,36 @@ orbs:
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    #parameters:
-      # Add parameter here   
+    parameters:
+      workflow_id:
+        type: string   
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-            aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+            echo "Destroying environment: << parameters.workflow_id >> "
+            aws s3 rb s3://udapeople-<<parameters.workflow_id>> --force  
+            aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.workflow_id>>
+            aws cloudformation delete-stack --stack-name "udapeople-frontend-<<parameters.workflow_id>>
 
-#   revert-migrations:
-#     description: Revert the last migration if successfully run in the current workflow.
-#     parameters:
-#       # Add parameter here     
-#     steps:
-#       - run:
-#           name: Revert migrations
-#           # Add when this will run
-#           command: |
-#             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-#             SUCCESS = 1
-#             if(( $SUCCESS==1 )); 
-#             then
-#             #  cd ~/project/backend
-#             #  npm install
-#             #  Add revert code here. You can find this in the Getting Started section.
-#               exit 1
-#             fi
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      workflow_id:
+          type: string     
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            SUCCESS=$(curl --insecure https://kvdb.io/UqTUMYQd8BzfdUmtJPL8Jw/migration_<<parameters.workflow_id>>)
+            if(( $SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
+            fi
             
 jobs:
   build-frontend:
@@ -192,7 +194,9 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure 
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}     
 
   configure-infrastructure:
     docker:
@@ -340,7 +344,7 @@ jobs:
             sleep 2m
             if curl -s "${API_URL}/api/status" | grep "ok"
             then
-                exit 0
+                exit 1
             else
                 exit 1
             fi
@@ -355,7 +359,10 @@ jobs:
             else
                 exit 1
             fi
-      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
 #   cloudfront-update:
 #     docker:
