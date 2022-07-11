@@ -282,12 +282,14 @@ jobs:
           name: Install dependencies
           command: |
             apk add openssh
+            apk add --update curl tar gzip
             apk add --update ansible
             apk add --update nodejs npm
       - run:
           name: Deploy backend
           command: |
-            echo ENVIROMENT=production > "backend/.env"
+            # echo ENVIROMENT=production > "backend/.env"
+            echo NODE_ENV=production > ~/project/backend/.env
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
             echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
@@ -299,8 +301,8 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cat backend/.env
             cd backend
-            npm i --quiet
-            npm run build --quiet
+            npm install --silent
+            npm run build --silent
             cd ..
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
