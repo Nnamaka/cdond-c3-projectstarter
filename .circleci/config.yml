@@ -421,6 +421,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
+            echo "s3://${OldWorkflowID}"
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rb "s3://${OldWorkflowID}" --force  
