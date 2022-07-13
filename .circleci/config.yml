@@ -447,11 +447,13 @@ jobs:
             if [[ "${OldWorkflowID}" =~ "${CIRCLE_WORKFLOW_ID:0:7}" ]]
             then
               echo -------------No old resources to clean-------------
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID:19:7}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID:19:7}"
             else 
               echo -------------cleaning up old resources-------------
               aws s3 rb "s3://${OldWorkflowID:0:9}-${OldWorkflowID:19:7}" --force  
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID:10:7}"
-              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID:10:7}"
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID:19:7}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID:19:7}"
             fi
             
 workflows:
