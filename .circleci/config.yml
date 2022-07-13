@@ -246,7 +246,6 @@ jobs:
             workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}    
-     # npm run migrations:revert
 
   deploy-frontend:
     docker:
@@ -346,13 +345,13 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text | tail -1)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
           name: Backend smoke test.
           command: |
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text | tail -1)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}/api/status"
             sleep 2m
@@ -409,9 +408,13 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text
+
             export OldWorkflowID=$(aws cloudformation \
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
+            --no-paginate --output text | head -1)
 
             echo OldWorkflowID: "${OldWorkflowID}"
 
@@ -426,11 +429,12 @@ jobs:
           command: |
             export OldWorkflowID=$(aws cloudformation \
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
+            --no-paginate --output text | head -1)
 
             echo s3://"${OldWorkflowID}"
             echo new production resources ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             echo old production resources ID: "${OldWorkflowID:10:7}"
+            
             if [[ "${OldWorkflowID}" =~ "${CIRCLE_WORKFLOW_ID:0:7}" ]]
             then
               echo -------------No old resources to clean-------------
