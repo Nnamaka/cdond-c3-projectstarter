@@ -434,7 +434,7 @@ jobs:
             echo s3://"${OldWorkflowID}"
             echo new production resources ID: "${CIRCLE_WORKFLOW_ID:0:7}"
             echo old production resources ID: "${OldWorkflowID:10:7}"
-            
+
             if [[ "${OldWorkflowID}" =~ "${CIRCLE_WORKFLOW_ID:0:7}" ]]
             then
               echo -------------No old resources to clean-------------
@@ -445,7 +445,6 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID:10:7}"
             fi
             
-
 workflows:
   default:
     jobs:
