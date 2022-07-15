@@ -356,7 +356,7 @@ jobs:
             sleep 2m
             if curl -s "${API_URL}/api/status" | grep "ok"
             then
-                exit 1
+                exit 0
             else
                 exit 1
             fi
@@ -464,9 +464,9 @@ workflows:
           context: slacknotifications
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          # filters:
-          #   branches:
-          #     only: [test-feature-branch]
+          filters:
+            branches:
+              only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
